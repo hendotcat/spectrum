@@ -18,9 +18,7 @@ $palette: (
 @mixin frame ($pixels) {
   $i: 0;
   $n: length($pixels);
-  $comma: unquote(",");
   $box-shadow: ();
-  $landscape: ();
   
   @each $pixel in $pixels {
     $x: nth($pixel, 1);
@@ -39,16 +37,11 @@ $palette: (
         * 1vmin
       )
       #{$size}px
-      $color
+      $color,
+      $separator: comma,
     );
-    
+
     $i: $i + 1;
-    @if $i < $n {
-      $box-shadow: append(
-        $box-shadow,
-        $comma,
-      );
-    }
   }
 
   box-shadow: $box-shadow;
@@ -59,25 +52,25 @@ $palette: (
   @for $x from 1 through $w - 1 {
     @for $y from 1 through $w - 1 {
       $color: nth($palette, 1);
-      
+
       $xo: abs($x - $h);
       $yo: abs($y - $h);
-      
+
       $c: 0;
       @if $y < 4 {
         $c: 0 - $y - $z;
       } @else {
         $c: $y - $z;
       }
-      
+
       $c: $c+abs(($w / 2) - $x);
       $c: $c%length($palette)+1;
       $color: nth($palette, $c);
-      
+
       $size: 0;
-      
+
       $show: false;
-      
+
       @if $xo == 0 or $yo == 0 {
       } @else {
         $show: (
@@ -86,12 +79,12 @@ $palette: (
           $yo + ($z % 3))
         );
       }
-      
+
       $dm: 8;
       $size: $xo
         * $dm + $yo
         * $dm * 2;
-      
+
       @if $show {
         $pixels: append($pixels, (
           $x, $y, $color, $size
@@ -141,7 +134,7 @@ body::after {
   top: calc(#{$p} * -2vmin);
   border-radius: 50%;
   padding: calc(#{$p} * 0.5vmin);
- 
+
   animation:
     frames
     64s
