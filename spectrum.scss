@@ -15,17 +15,6 @@ $palette: (
   #FF004D
 );
 
-@mixin pixel {
-  content: "";
-  height: calc(#{$p} * 1vmin);
-  width: calc(#{$p} * 1vmin);
-  display: block;
-  position: absolute;
-  top: calc(#{$p} * -2vmin);
-  border-radius: 50%;
-  padding: calc(#{$p} * 0.5vmin);
-}
-
 @mixin frame ($pixels) {
   $i: 0;
   $n: length($pixels);
@@ -130,7 +119,6 @@ body {
   );
 }
 
-
 @mixin frames ($frames) {
   $i: 0;
   $n: length($frames);
@@ -139,7 +127,7 @@ body {
   
   @keyframes frames {
     @each $frame in $frames {
-      #{$i * $mul}% {
+      #{$i * $mul * 1%} {
         @include frame($frame);
       }
       $i: $i + 1;
@@ -155,8 +143,15 @@ $wave: ();
 @include frames($wave);
 
 body::after {
-  @include pixel;
-  
+  content: "";
+  height: calc(#{$p} * 1vmin);
+  width: calc(#{$p} * 1vmin);
+  display: block;
+  position: absolute;
+  top: calc(#{$p} * -2vmin);
+  border-radius: 50%;
+  padding: calc(#{$p} * 0.5vmin);
+ 
   animation:
     frames
     64s
