@@ -119,28 +119,18 @@ body {
   );
 }
 
-@mixin frames ($frames) {
-  $i: 0;
-  $n: length($frames);
-  $mul: 100 / $n;
-  $name: lwave;
-  
-  @keyframes frames {
-    @each $frame in $frames {
-      #{$i * $mul * 1%} {
-        @include frame($frame);
-      }
-      $i: $i + 1;
-    }
-  }
-}
-
 $wave: ();
 @for $i from 0 through 128 {
   $wave: append($wave, frame($i))
 }
 
-@include frames($wave);
+@keyframes frames {
+  @for $i from 1 through length($wave) {
+    #{($i - 1) * (100 / length($wave)) * 1%} {
+      @include frame(nth($wave, $i));
+    }
+  }
+}
 
 body::after {
   content: "";
