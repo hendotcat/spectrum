@@ -112,19 +112,67 @@ $box-shadow: ();
   }
 }
 
+@function point($x, $y, $c) {
+  @return 
+    #{($x * 10vmin) + 50vmin}
+    #{($y * 10vmin) + 50vmin}
+    1vmin
+    $c
+  ;
+}
+
+
+@function circle($r, $c) {
+  $box-shadow: ();
+  $f: 1 - $r;
+  $ddF_x: 0;
+  $ddF_y: -2 * $r;
+  $x: 0;
+  $y: $r;
+  $points: ();
+
+  $points: append($points, point(0, 0 + $r, $c), $separator: comma);
+  $points: append($points, point(0, 0 - $r, $c), $separator: comma);
+  $points: append($points, point(0 + $r, 0, $c), $separator: comma);
+  $points: append($points, point(0 - $r, 0, $c), $separator: comma);
+
+  @while $x < $y {
+    @if $f >= 0 {
+      $y: $y - 1;
+      $ddF_y: $ddF_y + 2;
+      $f: $f + $ddF_y;
+    }
+    $x: $x + 1;
+    $ddF_y: $ddF_y + 2;
+    $f: $f + $ddF_y + 1;
+
+    $points: append($points, point(0 + $x, 0 + $y, $c), $separator: comma);
+    $points: append($points, point(0 - $x, 0 + $y, $c), $separator: comma);
+    $points: append($points, point(0 + $x, 0 - $y, $c), $separator: comma);
+    $points: append($points, point(0 - $x, 0 - $y, $c), $separator: comma);
+
+    $points: append($points, point(0 + $y, 0 + $x, $c), $separator: comma);
+    $points: append($points, point(0 - $y, 0 + $x, $c), $separator: comma);
+    $points: append($points, point(0 + $y, 0 - $x, $c), $separator: comma);
+    $points: append($points, point(0 - $y, 0 - $x, $c), $separator: comma);
+  }
+
+  @return $points;
+}
+
+@debug circle(4, blue);
+
 $waveFrames: map.set(
   $waveFrames,
   0%,
-  $box-shadow
+  circle(8, blue)
 );
 
 $waveFrames: map.set(
   $waveFrames,
   100%,
-  $box-shadow
+  circle(1, blue)
 );
-
-@debug $box-shadow;
 
 @keyframes spectrum {
   @each $percent, $boxShadow in $waveFrames {
