@@ -1,5 +1,6 @@
 @use "sass:map";
 @use "sass:math";
+@use "sass:meta";
 
 $w: 8;
 $p: 100 / $w;
@@ -84,20 +85,6 @@ $waveFrames: ();
   );
 }
 
-/*
-$waveFrames: map.set(
-  $waveFrames,
-  0%,
-  1vmin 50vmin 1vmin red
-);
-
-$waveFrames: map.set(
-  $waveFrames,
-  100%,
-  1vmin 50vmin 1vmin blue
-);
-*/
-
 $box-shadow: ();
 @for $x from 1 through 9 {
   @for $y from 1 through 9 {
@@ -114,16 +101,14 @@ $box-shadow: ();
 
 @function point($x, $y, $c) {
   @return 
-    #{($x * 10vmin) + 50vmin}
-    #{($y * 10vmin) + 50vmin}
+    #{($x * 5vmin) + 54vmin}
+    #{($y * 5vmin) + 54vmin}
     1vmin
     $c
   ;
 }
 
-
 @function circle($r, $c) {
-  $box-shadow: ();
   $f: 1 - $r;
   $ddF_x: 0;
   $ddF_y: -2 * $r;
@@ -143,8 +128,8 @@ $box-shadow: ();
       $f: $f + $ddF_y;
     }
     $x: $x + 1;
-    $ddF_y: $ddF_y + 2;
-    $f: $f + $ddF_y + 1;
+    $ddF_x: $ddF_x + 2;
+    $f: $f + $ddF_x + 1;
 
     $points: append($points, point(0 + $x, 0 + $y, $c), $separator: comma);
     $points: append($points, point(0 - $x, 0 + $y, $c), $separator: comma);
@@ -160,19 +145,38 @@ $box-shadow: ();
   @return $points;
 }
 
-@debug circle(4, blue);
+@function frame($colors) {
+  $shadow: ();
+  @for $r from 1 through length($colors) {
+    $shadow: join(
+      $shadow,
+      circle($r, nth($colors, $r)),
+      $separator: comma
+    );
+  }
+  @return $shadow;
+}
 
-$waveFrames: map.set(
-  $waveFrames,
-  0%,
-  circle(8, blue)
-);
+$waveFrames: ();
 
-$waveFrames: map.set(
-  $waveFrames,
-  100%,
-  circle(1, blue)
-);
+@for $i from 1 through length($palette) {
+  $percent: ($i - 1) / (length($palette) - 1) * 100%;
+  $colors: ();
+  @for $j from $i through length($palette) {
+    $colors: append($colors, nth($palette, $j));
+  }
+  @for $j from 1 through $i {
+    $colors: append($colors, nth($palette, $j));
+  }
+
+  $waveFrames: map.set(
+    $waveFrames,
+    $percent,
+    frame($colors)
+  );
+}
+
+@debug $waveFrames;
 
 @keyframes spectrum {
   @each $percent, $boxShadow in $waveFrames {
@@ -202,14 +206,14 @@ body::after {
   position: absolute;
   top: -10vmin;
   left: -10vmin;
-  height: 10vmin;
-  width: 10vmin;
+  height: 4vmin;
+  width: 4vmin;
   border-radius: 50%;
   animation-name: spectrum;
-  animation-duration: math.pow(2, 10) * 1ms;
-  animation-direction: alternate;
+  animation-duration: math.pow(2, 12) * 1ms;
+  animation-direction: reverse;
   animation-iteration-count: infinite;
-  animation-timing-function: ease-in-out;
+  animation-timing-function: linear;
 }
 
 /*
