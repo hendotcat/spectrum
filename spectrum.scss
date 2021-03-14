@@ -1,3 +1,4 @@
+@use "sass:map";
 @use "sass:math";
 
 $w: 8;
@@ -15,40 +16,11 @@ $palette: (
   #FF004D
 );
 
-@mixin frame ($pixels) {
-  $i: 0;
-  $n: length($pixels);
-  $box-shadow: ();
-  
-  @each $pixel in $pixels {
-    $x: nth($pixel, 1);
-    $y: nth($pixel, 2);
-    $color: nth($pixel, 3);
-    $size: nth($pixel, 4);
+$waveFrames: ();
+@for $i from 0 through 128 {
+  $percent: #{$i * (100 / 128) * 1%};
+  $boxShadow: ();
 
-    $box-shadow: append(
-      $box-shadow,
-      calc(
-        #{$p * ($x - 1)}
-        * 1vmin
-      )
-      calc(
-        #{$p * ($y + 1)}
-        * 1vmin
-      )
-      #{$size}px
-      $color,
-      $separator: comma,
-    );
-
-    $i: $i + 1;
-  }
-
-  box-shadow: $box-shadow;
-}
-
-@function frame($z: 0) {
-  $pixels: ();
   @for $x from 1 through $w - 1 {
     @for $y from 1 through $w - 1 {
       $color: nth($palette, 1);
@@ -58,9 +30,9 @@ $palette: (
 
       $c: 0;
       @if $y < 4 {
-        $c: 0 - $y - $z;
+        $c: 0 - $y - $i;
       } @else {
-        $c: $y - $z;
+        $c: $y - $i;
       }
 
       $c: $c+abs(($w / 2) - $x);
@@ -74,9 +46,9 @@ $palette: (
       @if $xo == 0 or $yo == 0 {
       } @else {
         $show: (
-          ($xo + ($z % 7)
+          ($xo + ($i % 7)
             !=
-          $yo + ($z % 3))
+          $yo + ($i % 3))
         );
       }
 
@@ -86,13 +58,29 @@ $palette: (
         * $dm * 2;
 
       @if $show {
-        $pixels: append($pixels, (
-          $x, $y, $color, $size
-        ));
+        $boxShadow: append(
+          $boxShadow,
+          calc(
+            #{$p * ($x - 1)}
+            * 1vmin
+          )
+          calc(
+            #{$p * ($y + 1)}
+            * 1vmin
+          )
+          #{$size}px
+          $color,
+          $separator: comma,
+        );
       }
     }
   }
-  @return $pixels;
+
+  $waveFrames: map.set(
+    $waveFrames,
+    $percent,
+    $boxShadow
+  );
 }
 
 html {
@@ -112,15 +100,10 @@ body {
   );
 }
 
-$wave: ();
-@for $i from 0 through 128 {
-  $wave: append($wave, frame($i))
-}
-
-@keyframes frames {
-  @for $i from 1 through length($wave) {
-    #{($i - 1) * (100 / length($wave)) * 1%} {
-      @include frame(nth($wave, $i));
+@keyframes spectrum {
+  @each $percent, $boxShadow in $waveFrames {
+    #{$percent} {
+      box-shadow: $boxShadow;
     }
   }
 }
@@ -135,10 +118,9 @@ body::after {
   border-radius: 50%;
   padding: calc(#{$p} * 0.5vmin);
 
-  animation:
-    frames
-    64s
-    ease-in
-    infinite
-    alternate;
+  animation-name: spectrum;
+  animation-duration: 64s;
+  animation-direction: alternate;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
 }
