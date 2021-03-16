@@ -15,95 +15,15 @@ $palette: (
   #FFEC27
   #FFA300
   #FF004D
+
+
 );
-
-$waveFrames: ();
-// @for $i from 0 through 128 {
-@if (false) {
-  $percent: #{$i * (100 / 128) * 1%};
-  $boxShadow: ();
-
-  @for $x from 1 through $w - 1 {
-    @for $y from 1 through $w - 1 {
-      $color: nth($palette, 1);
-
-      $xo: abs($x - $h);
-      $yo: abs($y - $h);
-
-      $c: 0;
-      @if $y < 4 {
-        $c: 0 - $y - $i;
-      } @else {
-        $c: $y - $i;
-      }
-
-      $c: $c+abs(($w / 2) - $x);
-      $c: $c%length($palette)+1;
-      $color: nth($palette, $c);
-
-      $size: 0;
-
-      $show: false;
-
-      @if $xo == 0 or $yo == 0 {
-      } @else {
-        $show: (
-          ($xo + ($i % 7)
-            !=
-          $yo + ($i % 3))
-        );
-      }
-
-      $dm: 8;
-      $size: $xo
-        * $dm + $yo
-        * $dm * 2;
-
-      @if $show {
-        $boxShadow: append(
-          $boxShadow,
-          calc(
-            #{$p * ($x - 1)}
-            * 1vmin
-          )
-          calc(
-            #{$p * ($y + 1)}
-            * 1vmin
-          )
-          1vmin
-          $color,
-          $separator: comma,
-        );
-      }
-    }
-  }
-
-  $waveFrames: map.set(
-    $waveFrames,
-    $percent,
-    $boxShadow
-  );
-}
-
-$box-shadow: ();
-@for $x from 1 through 9 {
-  @for $y from 1 through 9 {
-    $box-shadow: append(
-      $box-shadow,
-      #{$x * 10vmin}
-      #{$y * 10vmin}
-      4vmin
-      nth($palette, ($x % 8) + 1),
-      $separator: comma
-    );
-  }
-}
 
 @function point($x, $y, $c) {
   @return 
-    #{($x * 5vmin) + 54vmin}
-    #{($y * 5vmin) + 54vmin}
-    1vmin
+    #{($x * 5vmin) - 0vmin}
+    #{($y * 5vmin) - 0vmin}
+    8vmin
     $c
   ;
 }
@@ -176,11 +96,14 @@ $waveFrames: ();
   );
 }
 
-@debug $waveFrames;
+// @debug $waveFrames;
 
 @keyframes spectrum {
   @each $percent, $boxShadow in $waveFrames {
     #{$percent} {
+      transform: rotate(
+        #{($percent / 100%) * 45}deg
+      );
       box-shadow: $boxShadow;
     }
   }
@@ -204,33 +127,15 @@ body {
 body::after {
   content: "";
   position: absolute;
-  top: -10vmin;
-  left: -10vmin;
+  top: calc(50% - 2vmin);
+  left: calc(50% - 2vmin);
   height: 4vmin;
   width: 4vmin;
   border-radius: 50%;
+  // background-color: white;
   animation-name: spectrum;
   animation-duration: math.pow(2, 12) * 1ms;
   animation-direction: reverse;
   animation-iteration-count: infinite;
   animation-timing-function: linear;
 }
-
-/*
-body::after {
-  content: "";
-  height: calc(#{$p} * 1vmin);
-  width: calc(#{$p} * 1vmin);
-  display: block;
-  position: absolute;
-  top: calc(#{$p} * -2vmin);
-  border-radius: 50%;
-  padding: calc(#{$p} * 0.5vmin);
-
-  animation-name: spectrum;
-  animation-duration: math.pow(2, 10) * 1ms;
-  animation-direction: alternate;
-  animation-iteration-count: infinite;
-  animation-timing-function: ease-in-out;
-}
-*/
