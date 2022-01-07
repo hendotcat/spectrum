@@ -1,12 +1,12 @@
 {
-  "name": "@hendotcat/spectrum",
+  "name": "@henrycatalinismith/spectrum",
   "main": "spectrum.scss",
   "homepage": "https://hen.cat/spectrum/",
   "description": "Kaleidoscope in pure CSS",
   "license": "CC0-1.0",
   "author": {
     "name": "Henry Catalini Smith",
-    "email": "smith@hen.cat",
+    "email": "henry@catalinismith.com",
     "url": "https://hen.cat/"
   },
   "repository": {
@@ -15,7 +15,7 @@
   },
   "files": [],
   "dependencies": {
-    "@hendotcat/zoetrope": "latest"
+    "@henrycatalinismith/zoetrope": "latest"
   },
   "scripts": {
     "build": "zoetrope",
