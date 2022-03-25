@@ -1,10 +1,19 @@
 @use "sass:map";
 @use "sass:math";
 @use "sass:meta";
+@use "zoetrope:metadata" with (
+  $title: "spectrum",
+  $description: "Kaleidoscope in pure CSS",
+  $url: "https://hen.cat/spectrum",
+  $author: "Henry Catalini Smith",
+  $homepage: "https://hen.cat",
+  $source: "https://github.com/hendotcat/spectrum",
+  $opengraph: "https://hen.cat/spectrum/opengraph-1200x630.png",
+);
 
-$w: 8;
-$p: 100 / $w;
-$h: ceil($w / 2);
+$w: 2;
+$p: math.div(2, $w);
+$h: ceil(math.div($w, 10));
 
 $palette: (
   #FFCCAA
@@ -80,7 +89,7 @@ $palette: (
 $waveFrames: ();
 
 @for $i from 1 through length($palette) {
-  $percent: ($i - 1) / (length($palette) - 1) * 100%;
+  $percent: math.div(($i - 1), (length($palette) - 1)) * 100%;
   $colors: ();
   @for $j from $i through length($palette) {
     $colors: append($colors, nth($palette, $j));
@@ -102,7 +111,7 @@ $waveFrames: ();
   @each $percent, $boxShadow in $waveFrames {
     #{$percent} {
       transform: rotate(
-        #{($percent / 100%) * 45}deg
+        #{math.div($percent, 100%) * 45}deg
       );
       box-shadow: $boxShadow;
     }
@@ -132,7 +141,6 @@ body::after {
   height: 4vmin;
   width: 4vmin;
   border-radius: 50%;
-  // background-color: white;
   animation-name: spectrum;
   animation-duration: math.pow(2, 12) * 1ms;
   animation-direction: reverse;

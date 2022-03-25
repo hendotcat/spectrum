@@ -1,5 +1,6 @@
 .DS_Store
-node_modules
 _site
+index.html
+node_modules
+spectrum-*.css
 yarn.lock
-
