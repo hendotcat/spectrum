@@ -2,13 +2,13 @@
 @use "sass:math";
 @use "sass:meta";
 @use "zoetrope:metadata" with (
-  $title: "spectrum",
-  $description: "Kaleidoscope in pure CSS",
-  $url: "https://hen.cat/spectrum",
-  $author: "Henry Catalini Smith",
-  $homepage: "https://hen.cat",
-  $source: "https://github.com/hendotcat/spectrum",
-  $opengraph: "https://hen.cat/spectrum/opengraph-1200x630.png",
+ $title: "spectrum",
+ $description: "Kaleidoscope in pure CSS",
+ $url: "https://hen.cat/spectrum",
+ $author: "Henry Catalini Smith",
+ $homepage: "https://hen.cat",
+ $source: "https://github.com/hendotcat/spectrum",
+ $opengraph: "https://hen.cat/spectrum/opengraph-1200x630.png",
 );
 
 $w: 2;
@@ -16,134 +16,132 @@ $p: math.div(2, $w);
 $h: ceil(math.div($w, 10));
 
 $palette: (
-  #FFCCAA
-  #FF77A8
-  #83769C
-  #29ADFF
-  #00E436
-  #FFEC27
-  #FFA300
-  #FF004D
-
-
+ #FFCCAA
+ #FF77A8
+ #83769C
+ #29ADFF
+ #00E436
+ #FFEC27
+ #FFA300
+ #FF004D
 );
 
 @function point($x, $y, $c) {
-  @return 
-    #{($x * 5vmin) - 0vmin}
-    #{($y * 5vmin) - 0vmin}
-    8vmin
-    $c
-  ;
+ @return 
+  #{($x * 5vmin) - 0vmin}
+  #{($y * 5vmin) - 0vmin}
+  8vmin
+  $c
+ ;
 }
 
 @function circle($r, $c) {
-  $f: 1 - $r;
-  $ddF_x: 0;
-  $ddF_y: -2 * $r;
-  $x: 0;
-  $y: $r;
-  $points: ();
+ $f: 1 - $r;
+ $ddF_x: 0;
+ $ddF_y: -2 * $r;
+ $x: 0;
+ $y: $r;
+ $points: ();
 
-  $points: append($points, point(0, 0 + $r, $c), $separator: comma);
-  $points: append($points, point(0, 0 - $r, $c), $separator: comma);
-  $points: append($points, point(0 + $r, 0, $c), $separator: comma);
-  $points: append($points, point(0 - $r, 0, $c), $separator: comma);
+ $points: append($points, point(0, 0 + $r, $c), $separator: comma);
+ $points: append($points, point(0, 0 - $r, $c), $separator: comma);
+ $points: append($points, point(0 + $r, 0, $c), $separator: comma);
+ $points: append($points, point(0 - $r, 0, $c), $separator: comma);
 
-  @while $x < $y {
-    @if $f >= 0 {
-      $y: $y - 1;
-      $ddF_y: $ddF_y + 2;
-      $f: $f + $ddF_y;
-    }
-    $x: $x + 1;
-    $ddF_x: $ddF_x + 2;
-    $f: $f + $ddF_x + 1;
-
-    $points: append($points, point(0 + $x, 0 + $y, $c), $separator: comma);
-    $points: append($points, point(0 - $x, 0 + $y, $c), $separator: comma);
-    $points: append($points, point(0 + $x, 0 - $y, $c), $separator: comma);
-    $points: append($points, point(0 - $x, 0 - $y, $c), $separator: comma);
-
-    $points: append($points, point(0 + $y, 0 + $x, $c), $separator: comma);
-    $points: append($points, point(0 - $y, 0 + $x, $c), $separator: comma);
-    $points: append($points, point(0 + $y, 0 - $x, $c), $separator: comma);
-    $points: append($points, point(0 - $y, 0 - $x, $c), $separator: comma);
+ @while $x < $y {
+  @if $f >= 0 {
+   $y: $y - 1;
+   $ddF_y: $ddF_y + 2;
+   $f: $f + $ddF_y;
   }
+  $x: $x + 1;
+  $ddF_x: $ddF_x + 2;
+  $f: $f + $ddF_x + 1;
 
-  @return $points;
+  $points: append($points, point(0 + $x, 0 + $y, $c), $separator: comma);
+  $points: append($points, point(0 - $x, 0 + $y, $c), $separator: comma);
+  $points: append($points, point(0 + $x, 0 - $y, $c), $separator: comma);
+  $points: append($points, point(0 - $x, 0 - $y, $c), $separator: comma);
+
+  $points: append($points, point(0 + $y, 0 + $x, $c), $separator: comma);
+  $points: append($points, point(0 - $y, 0 + $x, $c), $separator: comma);
+  $points: append($points, point(0 + $y, 0 - $x, $c), $separator: comma);
+  $points: append($points, point(0 - $y, 0 - $x, $c), $separator: comma);
+ }
+
+ @return $points;
 }
 
 @function frame($colors) {
-  $shadow: ();
-  @for $r from 1 through length($colors) {
-    $shadow: join(
-      $shadow,
-      circle($r, nth($colors, $r)),
-      $separator: comma
-    );
-  }
-  @return $shadow;
+ $shadow: ();
+ @for $r from 1 through length($colors) {
+  $shadow: join(
+   $shadow,
+   circle($r, nth($colors, $r)),
+   $separator: comma
+  );
+ }
+ @return $shadow;
 }
 
 $waveFrames: ();
 
 @for $i from 1 through length($palette) {
-  $percent: math.div(($i - 1), (length($palette) - 1)) * 100%;
-  $colors: ();
-  @for $j from $i through length($palette) {
-    $colors: append($colors, nth($palette, $j));
-  }
-  @for $j from 1 through $i {
-    $colors: append($colors, nth($palette, $j));
-  }
+ $percent: math.div(($i - 1), (length($palette) - 1)) * 100%;
+ $colors: ();
+ @for $j from $i through length($palette) {
+  $colors: append($colors, nth($palette, $j));
+ }
+ @for $j from 1 through $i {
+  $colors: append($colors, nth($palette, $j));
+ }
 
-  $waveFrames: map.set(
-    $waveFrames,
-    $percent,
-    frame($colors)
-  );
+ $waveFrames: map.set(
+  $waveFrames,
+  $percent,
+  frame($colors)
+ );
 }
 
 // @debug $waveFrames;
 
 @keyframes spectrum {
-  @each $percent, $boxShadow in $waveFrames {
-    #{$percent} {
-      transform: rotate(
-        #{math.div($percent, 100%) * 45}deg
-      );
-      box-shadow: $boxShadow;
-    }
+ @each $percent, $boxShadow in $waveFrames {
+  #{$percent} {
+   transform: rotate(
+    #{math.div($percent, 100%) * 45}deg
+   );
+   box-shadow: $boxShadow;
   }
+ }
 }
 
 html {
-  overflow: hidden;
-  background: #111;
+ overflow: hidden;
+ background: #111;
 }
 
 body {
-  margin: 0;
-  width: 90vmin;
-  height: 90vmin;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+ margin: 0;
+ width: 90vmin;
+ height: 90vmin;
+ position: absolute;
+ top: 50%;
+ left: 50%;
+ transform: translate(-50%, -50%);
 }
 
 body::after {
-  content: "";
-  position: absolute;
-  top: calc(50% - 2vmin);
-  left: calc(50% - 2vmin);
-  height: 4vmin;
-  width: 4vmin;
-  border-radius: 50%;
-  animation-name: spectrum;
-  animation-duration: math.pow(2, 12) * 1ms;
-  animation-direction: reverse;
-  animation-iteration-count: infinite;
-  animation-timing-function: linear;
+ content: "";
+ position: absolute;
+ top: calc(50% - 2vmin);
+ left: calc(50% - 2vmin);
+ height: 4vmin;
+ width: 4vmin;
+ border-radius: 50%;
+ animation-name: spectrum;
+ animation-duration: math.pow(2, 12) * 1ms;
+ animation-direction: reverse;
+ animation-iteration-count: infinite;
+ animation-timing-function: linear;
 }
