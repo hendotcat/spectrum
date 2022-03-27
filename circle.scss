@@ -27,18 +27,37 @@ body {
  top: 50%;
  left: 50%;
  transform: translate(-50%, -50%);
- background-color: darkslategray;
+ background-color: black;
+ mix-blend-mode: color-dodge;
 }
 
-$half: math.div($w, $r) * 2;
-$center: xy($half, $half);
-$shadow: (string.unquote("#{$r} #{$r} 0vmin #FFCCAA"));
-$circle: circle($center, 32);
+$center: xy(0, 0);
+$shadow: ();
+$circle: circle($center, 90);
+
+$palette: (
+ firebrick,
+ orangered,
+ tomato,
+ orange,
+ khaki,
+ gold,
+ limegreen,
+ green,
+ deepskyblue,
+ blue,
+ hotpink,
+ mediumvioletred,
+ fuchsia,
+ rebeccapurple,
+);
 
 @for $c from 1 through length($circle) {
- @if ($c % 5 == 0) {
+ @if ($c % 9 == 0) {
   $p: nth($circle, $c);
-  $s: "#{x($p) * 1vmin} #{y($p) * 1vmin} 0vmin red";
+  $c: nth($palette, $c % length($palette) + 1);
+  @debug $c;
+  $s: "#{x($p) * 1vmin} #{y($p) * 1vmin} 1vmin #{$c}";
   $s: string.unquote($s);
   $shadow: join(
     $shadow,
@@ -51,13 +70,45 @@ $circle: circle($center, 32);
 @debug $circle;
 
 body::after {
- background: white;
+ background: black;
  box-shadow: $shadow; 
  content: "";
  position: absolute;
  top: 0 - $r;
  left: 0 - $r;
- height: $r;
- width: $r;
+ height: $r * 2;
+ width: $r * 2;
  border-radius: 50%;
+ animation: clockwise #{math.pow(2, 15) * 1ms} infinite linear;
+}
+
+body::before {
+ background: black;
+ box-shadow: $shadow; 
+ content: "";
+ position: absolute;
+ bottom: 0 - $r;
+ right: 0 - $r;
+ height: $r * 18;
+ width: $r * 18;
+ border-radius: 50%;
+ animation: anticlockwise #{math.pow(2, 15) * 1ms} infinite linear;
+}
+
+@keyframes clockwise {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes anticlockwise {
+  to {
+    transform: rotate(0deg);
+  }
+  from {
+    transform: rotate(360deg);
+  }
 }

@@ -1,0 +1,93 @@
+@use "sass:map";
+@use "sass:math";
+@use "sass:meta";
+@use "sass:string";
+
+@use "zoetrope:geometry" as *;
+@use "zoetrope:metadata" with (
+ $title: "spectrum",
+);
+
+$e: xy(10, 20);
+@debug $e;
+
+html {
+ overflow: hidden;
+ background: #111;
+}
+
+$w: 100vmin;
+$r: 2vmin;
+
+body {
+ margin: 0;
+ width: 100vmin;
+ height: 100vmin;
+ position: absolute;
+ top: 50%;
+ left: 50%;
+ transform: translate(-50%, -50%);
+ background-color: black;
+ mix-blend-mode: color-dodge;
+}
+
+$half: math.div($w, $r) * 2;
+$center: xy(0,0);
+
+$shadow1: ();
+$shadow2: ();
+
+$circle1: circle($center, 32);
+$circle2: circle($center, 16);
+
+@for $c from 1 through length($circle1) {
+ $p: nth($circle1, $c);
+ $s: "#{x($p) * 1vmin} #{y($p) * 1vmin} 2vmin deepskyblue";
+ $s: string.unquote($s);
+ $shadow1: join(
+   $shadow1,
+   $s,
+   $separator: comma
+ );
+}
+
+@for $c from 1 through length($circle2) {
+ $p: nth($circle2, $c);
+ $s: "#{x($p) * 1vmin} #{y($p) * 1vmin} 2vmin hotpink";
+ $s: string.unquote($s);
+ $shadow2: join(
+   $shadow2,
+   $s,
+   $separator: comma
+ );
+}
+
+@debug $circle1;
+
+body::after {
+ background: black;
+ box-shadow: $shadow1; 
+ content: "";
+ position: absolute;
+ bottom: calc(50% - $r);
+ right: calc(50% - $r);
+ height: $r * 1.8;
+ width: $r * 1.8;
+ animation: circles #{math.pow(2, 12) * 1ms} linear infinite forwards;
+ border-radius: 50%;
+}
+
+@keyframes circles {
+ 0% {
+  box-shadow: $shadow1;
+  transform: rotate(0deg);
+ }
+ 50% {
+  box-shadow: $shadow2;
+  transform: rotate(360deg);
+ }
+ 100% {
+  box-shadow: $shadow1;
+  transform: rotate(720deg);
+ }
+}
