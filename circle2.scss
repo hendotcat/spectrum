@@ -28,7 +28,7 @@ body {
  left: 50%;
  transform: translate(-50%, -50%);
  background-color: black;
- mix-blend-mode: color-dodge;
+ mix-blend-mode: hard-light;
 }
 
 $half: math.div($w, $r) * 2;
@@ -39,6 +39,9 @@ $shadow2: ();
 
 $circle1: circle($center, 32);
 $circle2: circle($center, 16);
+
+$circle3: circle($center, 64);
+$circle4: circle($center, 48);
 
 @for $c from 1 through length($circle1) {
  $p: nth($circle1, $c);
@@ -53,6 +56,28 @@ $circle2: circle($center, 16);
 
 @for $c from 1 through length($circle2) {
  $p: nth($circle2, $c);
+ $s: "#{x($p) * 1vmin} #{y($p) * 1vmin} 2vmin hotpink";
+ $s: string.unquote($s);
+ $shadow1: join(
+   $shadow1,
+   $s,
+   $separator: comma
+ );
+}
+
+@for $c from 1 through length($circle3) {
+ $p: nth($circle3, $c);
+ $s: "#{x($p) * 1vmin} #{y($p) * 1vmin} 2vmin deepskyblue";
+ $s: string.unquote($s);
+ $shadow2: join(
+   $shadow2,
+   $s,
+   $separator: comma
+ );
+}
+
+@for $c from 1 through length($circle4) {
+ $p: nth($circle4, $c);
  $s: "#{x($p) * 1vmin} #{y($p) * 1vmin} 2vmin hotpink";
  $s: string.unquote($s);
  $shadow2: join(
@@ -71,9 +96,9 @@ body::after {
  position: absolute;
  bottom: calc(50% - $r);
  right: calc(50% - $r);
- height: $r * 1.8;
- width: $r * 1.8;
- animation: circles #{math.pow(2, 12) * 1ms} linear infinite forwards;
+ height: $r * 3.8;
+ width: $r * 3.8;
+ animation: circles #{math.pow(2, 16) * 1ms} linear infinite forwards;
  border-radius: 50%;
 }
 
