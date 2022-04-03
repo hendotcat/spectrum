@@ -36,12 +36,12 @@ $half: math.div($w, $r) * 2;
 $center: xy(0,0);
 
 
-@function c2s($circle, $colors) {
+@function c2s($circle, $radius, $colors) {
  $shadow: ();
  @for $c from 1 through length($circle) {
   $p: nth($circle, $c);
   $col: nth($colors, ($c % length($colors)) + 1);
-  $s: "#{x($p) * 1vmin} #{y($p) * 1vmin} 2vmin #{$col}";
+  $s: "#{x($p) * 1vmin * $radius} #{y($p) * 1vmin * $radius} 2vmin #{$col}";
   $s: string.unquote($s);
   $shadow: join(
     $shadow,
@@ -53,46 +53,68 @@ $center: xy(0,0);
 }
 
 $shadow1: ();
-$shadow1: list.join($shadow1, c2s(circle($center, 1), (deepskyblue, white, red, salmon, teal, limegreen, magenta)));
-$shadow1: list.join($shadow1, c2s(circle($center, 2), (deepskyblue,white)));
-$shadow1: list.join($shadow1, c2s(circle($center, 4), (white,deepskyblue)));
-$shadow1: list.join($shadow1, c2s(circle($center, 8), (hotpink,deeppink)));
-$shadow1: list.join($shadow1, c2s(circle($center, 16), (red,yellow)));
+$shadow1: list.append($shadow1, c2s(circle($center, 1), 1, (deepskyblue, white, red, salmon, teal, limegreen, magenta)));
+$shadow1: list.append($shadow1, c2s(circle($center, 4), 2, (deepskyblue,white)));
+$shadow1: list.append($shadow1, c2s(circle($center, 8), 4, (white,deepskyblue)));
+$shadow1: list.append($shadow1, c2s(circle($center, 16), 8, (hotpink,deeppink)));
+$shadow1: list.append($shadow1, c2s(circle($center, 32), 16, (red,yellow)));
 
 $shadow2: ();
-$shadow2: list.join($shadow2, c2s(circle($center, 8), forestgreen));
-$shadow2: list.join($shadow2, c2s(circle($center, 128), lavender));
-$shadow2: list.join($shadow2, c2s(circle($center, 8), fuchsia));
-$shadow2: list.join($shadow2, c2s(circle($center, 128), turquoise));
-$shadow2: list.join($shadow2, c2s(circle($center, 8), turquoise));
+$shadow2: list.append($shadow2, c2s(circle($center, 8), 1, (forestgreen, lavender)));
+$shadow2: list.append($shadow2, c2s(circle($center, 16), 1, (lavender, forestgreen)));
+$shadow2: list.append($shadow2, c2s(circle($center, 8), 1, fuchsia));
+$shadow2: list.append($shadow2, c2s(circle($center, 16), 1, turquoise));
+$shadow2: list.append($shadow2, c2s(circle($center, 8), 1, turquoise));
 
 $shadows: ();
 $shadows: list.append($shadows, $shadow2);
 
 body::after {
  background: black;
- // box-shadow: $shadow1; 
  content: "";
  position: absolute;
  bottom: calc(50% - $r);
  right: calc(50% - $r);
  height: $r * 3.8;
  width: $r * 3.8;
- animation: circles #{math.pow(2, 16) * 1ms} linear infinite forwards;
+ animation: circles1 #{math.pow(2, 14) * 1ms} linear infinite forwards;
  border-radius: 50%;
 }
 
-$keyframes: (length($shadows) * 2) - 2 ;
-$kflength: math.div(100, $keyframes - 1);
+body::before {
+ background: black;
+ content: "";
+ position: absolute;
+ bottom: calc(50% - $r);
+ right: calc(50% - $r);
+ height: $r * 3.8;
+ width: $r * 3.8;
+ animation: circles2 #{math.pow(2, 14) * 1ms} linear infinite forwards;
+ border-radius: 50%;
+}
+
+$keyframes1: length($shadow1);
+$keyframes2: length($shadow2);
+$kflength1: math.div(100, $keyframes1 - 1);
+$kflength2: math.div(100, $keyframes2 - 1);
 
 @keyframes circles1 {
   $pc: 0;
-  @for $kf from 0 through  ($keyframes) {
+  @for $kf from 1 through ($keyframes1 ) {
     #{$pc}% {
-      box-shadow: none;
+      box-shadow: nth($shadow1, $kf);
     }
-    
-    $pc: $pc + $kflength;
+    $pc: $pc + $kflength1;
+  } 
+}
+
+@keyframes circles2 {
+  $pc: 0;
+  @for $kf from 1 through ($keyframes2 - 1) {
+    #{$pc}% {
+      box-shadow: nth($shadow2, $kf);
+    }
+    $pc: $pc + $kflength2;
   } 
 }
 
