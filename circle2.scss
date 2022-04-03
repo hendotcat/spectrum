@@ -57,17 +57,14 @@ $shadow1: list.append($shadow1, c2s(circle($center, 1), 1, (deepskyblue, white, 
 $shadow1: list.append($shadow1, c2s(circle($center, 4), 2, (deepskyblue,white)));
 $shadow1: list.append($shadow1, c2s(circle($center, 8), 4, (white,deepskyblue)));
 $shadow1: list.append($shadow1, c2s(circle($center, 16), 8, (hotpink,deeppink)));
-$shadow1: list.append($shadow1, c2s(circle($center, 32), 16, (red,yellow)));
+$shadow1: list.append($shadow1, c2s(circle($center, 32), 1, (red,yellow)));
 
 $shadow2: ();
-$shadow2: list.append($shadow2, c2s(circle($center, 8), 1, (forestgreen, lavender)));
-$shadow2: list.append($shadow2, c2s(circle($center, 16), 1, (lavender, forestgreen)));
-$shadow2: list.append($shadow2, c2s(circle($center, 8), 1, fuchsia));
-$shadow2: list.append($shadow2, c2s(circle($center, 16), 1, turquoise));
-$shadow2: list.append($shadow2, c2s(circle($center, 8), 1, turquoise));
-
-$shadows: ();
-$shadows: list.append($shadows, $shadow2);
+$shadow2: list.append($shadow2, c2s(circle($center, 4), 1, (forestgreen, lavender)));
+$shadow2: list.append($shadow2, c2s(circle($center, 4), 1, (lavender, forestgreen)));
+$shadow2: list.append($shadow2, c2s(circle($center, 4), 1, fuchsia));
+$shadow2: list.append($shadow2, c2s(circle($center, 4), 1, turquoise));
+$shadow2: list.append($shadow2, c2s(circle($center, 4), 1, turquoise));
 
 body::after {
  background: black;
@@ -100,9 +97,10 @@ $kflength2: math.div(100, $keyframes2 - 1);
 
 @keyframes circles1 {
   $pc: 0;
-  @for $kf from 1 through ($keyframes1 ) {
+  @for $kf from 1 through $keyframes1 {
     #{$pc}% {
       box-shadow: nth($shadow1, $kf);
+      transform: scale(#{(1 / length($keyframes1)) * $kf * 2});
     }
     $pc: $pc + $kflength1;
   } 
@@ -110,25 +108,10 @@ $kflength2: math.div(100, $keyframes2 - 1);
 
 @keyframes circles2 {
   $pc: 0;
-  @for $kf from 1 through ($keyframes2 - 1) {
+  @for $kf from 1 through $keyframes2 {
     #{$pc}% {
       box-shadow: nth($shadow2, $kf);
     }
     $pc: $pc + $kflength2;
   } 
-}
-
-@keyframes circles {
- 0% {
-  box-shadow: $shadow1;
-  transform: rotate(0deg);
- }
- 50% {
-  box-shadow: $shadow2;
-  transform: rotate(360deg);
- }
- 100% {
-  box-shadow: $shadow1;
-  transform: rotate(720deg);
- }
 }
