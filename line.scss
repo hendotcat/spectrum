@@ -1,0 +1,53 @@
+@use "sass:list";
+@use "sass:map";
+@use "sass:math";
+@use "sass:meta";
+@use "sass:string";
+@use "zoetrope:geometry" as *;
+
+html {
+ overflow: hidden;
+ background: #111;
+}
+
+body {
+ margin: 0;
+ width: 100vmin;
+ height: 100vmin;
+ position: absolute;
+ top: 50%;
+ left: 50%;
+ transform: translate(-50%, -50%);
+ background-color: gray;
+}
+
+$r: 8vmin;
+$l: line(xy(1, 1), xy(4, 4));
+@debug $l;
+
+$shadow: ();
+@for $i from 1 through length($l) {
+ $p: nth($l, $i);
+ $s: "#{x($p) * 8vmin} #{y($p) * 8vmin} 0vmin hotpink";
+ $s: string.unquote($s);
+ $shadow: join(
+   $shadow,
+   $s,
+   $separator: comma
+ );
+}
+
+@debug $shadow;
+
+
+
+body::after {
+ background: white;
+ box-shadow: $shadow;
+ content: "";
+ position: absolute;
+ top: 0;
+ left: 0;
+ height: $r;
+ width: $r;
+}

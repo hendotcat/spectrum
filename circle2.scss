@@ -18,7 +18,7 @@ html {
 }
 
 $w: 100vmin;
-$r: 2vmin;
+$r: 8vmin;
 
 body {
  margin: 0;
@@ -61,9 +61,9 @@ $shadow1: list.append($shadow1, c2s(circle($center, 32), 1, (red,yellow)));
 
 $shadow2: ();
 $shadow2: list.append($shadow2, c2s(circle($center, 4), 1, (forestgreen, lavender)));
-$shadow2: list.append($shadow2, c2s(circle($center, 4), 1, (lavender, forestgreen)));
+$shadow2: list.append($shadow2, c2s(circle($center, 8), 1, (lavender, forestgreen)));
 $shadow2: list.append($shadow2, c2s(circle($center, 4), 1, fuchsia));
-$shadow2: list.append($shadow2, c2s(circle($center, 4), 1, turquoise));
+$shadow2: list.append($shadow2, c2s(circle($center, 64), 1, turquoise));
 $shadow2: list.append($shadow2, c2s(circle($center, 4), 1, turquoise));
 
 body::after {
@@ -72,9 +72,9 @@ body::after {
  position: absolute;
  bottom: calc(50% - $r);
  right: calc(50% - $r);
- height: $r * 3.8;
- width: $r * 3.8;
- animation: circles1 #{math.pow(2, 14) * 1ms} linear infinite forwards;
+ height: $r;
+ width: $r;
+ animation: circles1 #{math.pow(2, 14) * 1ms} linear infinite alternate;
  border-radius: 50%;
 }
 
@@ -84,9 +84,9 @@ body::before {
  position: absolute;
  bottom: calc(50% - $r);
  right: calc(50% - $r);
- height: $r * 3.8;
- width: $r * 3.8;
- animation: circles2 #{math.pow(2, 14) * 1ms} linear infinite forwards;
+ height: $r;
+ width: $r;
+ animation: circles2 #{math.pow(2, 14) * 1ms} linear infinite alternate;
  border-radius: 50%;
 }
 
@@ -100,7 +100,7 @@ $kflength2: math.div(100, $keyframes2 - 1);
   @for $kf from 1 through $keyframes1 {
     #{$pc}% {
       box-shadow: nth($shadow1, $kf);
-      transform: scale(#{(1 / length($keyframes1)) * $kf * 2});
+      transform: rotate(#{360deg * math.div($pc, 100)});
     }
     $pc: $pc + $kflength1;
   } 
@@ -111,7 +111,8 @@ $kflength2: math.div(100, $keyframes2 - 1);
   @for $kf from 1 through $keyframes2 {
     #{$pc}% {
       box-shadow: nth($shadow2, $kf);
-    }
+      transform: rotate(#{-360deg * math.div($pc, 100)});
+     }
     $pc: $pc + $kflength2;
   } 
 }
