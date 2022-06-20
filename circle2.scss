@@ -1,0 +1,118 @@
+@use "sass:list";
+@use "sass:map";
+@use "sass:math";
+@use "sass:meta";
+@use "sass:string";
+
+@use "zoetrope:geometry" as *;
+@use "zoetrope:metadata" with (
+ $title: "spectrum",
+);
+
+$e: xy(10, 20);
+@debug $e;
+
+html {
+ overflow: hidden;
+ background: #111;
+}
+
+$w: 100vmin;
+$r: 8vmin;
+
+body {
+ margin: 0;
+ width: 100vmin;
+ height: 100vmin;
+ position: absolute;
+ top: 50%;
+ left: 50%;
+ transform: translate(-50%, -50%);
+ background-color: black;
+ mix-blend-mode: hard-light;
+}
+
+$half: math.div($w, $r) * 2;
+$center: xy(0,0);
+
+
+@function c2s($circle, $radius, $colors) {
+ $shadow: ();
+ @for $c from 1 through length($circle) {
+  $p: nth($circle, $c);
+  $col: nth($colors, ($c % length($colors)) + 1);
+  $s: "#{x($p) * 1vmin * $radius} #{y($p) * 1vmin * $radius} 2vmin #{$col}";
+  $s: string.unquote($s);
+  $shadow: join(
+    $shadow,
+    $s,
+    $separator: comma
+  );
+ }
+ @return $shadow;
+}
+
+$shadow1: ();
+$shadow1: list.append($shadow1, c2s(circle($center, 1), 1, (deepskyblue, white, red, salmon, teal, limegreen, magenta)));
+$shadow1: list.append($shadow1, c2s(circle($center, 4), 2, (deepskyblue,white)));
+$shadow1: list.append($shadow1, c2s(circle($center, 8), 4, (white,deepskyblue)));
+$shadow1: list.append($shadow1, c2s(circle($center, 16), 8, (hotpink,deeppink)));
+$shadow1: list.append($shadow1, c2s(circle($center, 32), 1, (red,yellow)));
+
+$shadow2: ();
+$shadow2: list.append($shadow2, c2s(circle($center, 4), 1, (forestgreen, lavender)));
+$shadow2: list.append($shadow2, c2s(circle($center, 8), 1, (lavender, forestgreen)));
+$shadow2: list.append($shadow2, c2s(circle($center, 4), 1, fuchsia));
+$shadow2: list.append($shadow2, c2s(circle($center, 64), 1, turquoise));
+$shadow2: list.append($shadow2, c2s(circle($center, 4), 1, turquoise));
+
+body::after {
+ background: black;
+ content: "";
+ position: absolute;
+ bottom: calc(50% - $r);
+ right: calc(50% - $r);
+ height: $r;
+ width: $r;
+ animation: circles1 #{math.pow(2, 14) * 1ms} linear infinite alternate;
+ border-radius: 50%;
+}
+
+body::before {
+ background: black;
+ content: "";
+ position: absolute;
+ bottom: calc(50% - $r);
+ right: calc(50% - $r);
+ height: $r;
+ width: $r;
+ animation: circles2 #{math.pow(2, 14) * 1ms} linear infinite alternate;
+ border-radius: 50%;
+}
+
+$keyframes1: length($shadow1);
+$keyframes2: length($shadow2);
+$kflength1: math.div(100, $keyframes1 - 1);
+$kflength2: math.div(100, $keyframes2 - 1);
+
+@keyframes circles1 {
+  $pc: 0;
+  @for $kf from 1 through $keyframes1 {
+    #{$pc}% {
+      box-shadow: nth($shadow1, $kf);
+      transform: rotate(#{360deg * math.div($pc, 100)});
+    }
+    $pc: $pc + $kflength1;
+  } 
+}
+
+@keyframes circles2 {
+  $pc: 0;
+  @for $kf from 1 through $keyframes2 {
+    #{$pc}% {
+      box-shadow: nth($shadow2, $kf);
+      transform: rotate(#{-360deg * math.div($pc, 100)});
+     }
+    $pc: $pc + $kflength2;
+  } 
+}

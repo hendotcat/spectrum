@@ -1,0 +1,95 @@
+@use "sass:list";
+@use "sass:map";
+@use "sass:math";
+@use "sass:meta";
+@use "sass:string";
+@use "zoetrope:geometry" as *;
+
+html {
+ overflow: hidden;
+ background: #111;
+}
+
+body {
+ margin: 0;
+ width: 100vmin;
+ height: 100vmin;
+ position: absolute;
+ top: 50%;
+ left: 50%;
+ transform: translate(-50%, -50%);
+ mix-blend-mode: color-dodge;
+}
+
+$r: 8vmin;
+$l: line(xy(1, 1), xy(16, 16));
+@debug $l;
+
+$shadow: ();
+@for $i from 1 through length($l) {
+ $p: nth($l, $i);
+ $s: "#{x($p) * 8vmin} #{y($p) * 8vmin} 8vmin hotpink";
+ $s: string.unquote($s);
+ $shadow: join(
+   $shadow,
+   $s,
+   $separator: comma
+ );
+}
+
+$shadow2: ();
+@for $i from 1 through length($l) {
+ $p: nth($l, $i);
+ $s: "#{x($p) * 8vmin} #{y($p) * 8vmin} 8vmin deepskyblue";
+ $s: string.unquote($s);
+ $shadow2: join(
+   $shadow2,
+   $s,
+   $separator: comma
+ );
+}
+
+
+body::after {
+ background: white;
+ box-shadow: $shadow;
+ border-radius: 50%;
+ content: "";
+ position: absolute;
+ top: 0;
+ left: 0;
+ height: $r * 3;
+ width: $r * 3;
+ animation: spin 4s linear forwards infinite;
+}
+
+body::before {
+ background: white;
+ box-shadow: $shadow2;
+ border-radius: 50%;
+ content: "";
+ position: absolute;
+ bottom: 0;
+ right: 0;
+ height: $r * 3;
+ width: $r * 3;
+ animation: spin2 300ms linear forwards infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin2 {
+  0% {
+    transform: rotate(180deg);
+  }
+  100% {
+    transform: rotate(-180deg);
+  }
+}

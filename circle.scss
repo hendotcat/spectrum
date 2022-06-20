@@ -1,0 +1,114 @@
+@use "sass:map";
+@use "sass:math";
+@use "sass:meta";
+@use "sass:string";
+
+@use "zoetrope:geometry" as *;
+@use "zoetrope:metadata" with (
+ $title: "spectrum",
+);
+
+$e: xy(10, 20);
+@debug $e;
+
+html {
+ overflow: hidden;
+ background: #111;
+}
+
+$w: 100vmin;
+$r: 4vmin;
+
+body {
+ margin: 0;
+ width: 100vmin;
+ height: 100vmin;
+ position: absolute;
+ top: 50%;
+ left: 50%;
+ transform: translate(-50%, -50%);
+ background-color: black;
+ mix-blend-mode: color-dodge;
+}
+
+$center: xy(0, 0);
+$shadow: ();
+$circle: circle($center, 90);
+
+$palette: (
+ firebrick,
+ orangered,
+ tomato,
+ orange,
+ khaki,
+ gold,
+ limegreen,
+ green,
+ deepskyblue,
+ blue,
+ hotpink,
+ mediumvioletred,
+ fuchsia,
+ rebeccapurple,
+);
+
+@for $c from 1 through length($circle) {
+ @if ($c % 9 == 0) {
+  $p: nth($circle, $c);
+  $c: nth($palette, $c % length($palette) + 1);
+  @debug $c;
+  $s: "#{x($p) * 1vmin} #{y($p) * 1vmin} 1vmin #{$c}";
+  $s: string.unquote($s);
+  $shadow: join(
+    $shadow,
+    $s,
+    $separator: comma
+  );
+ }
+}
+
+@debug $circle;
+
+body::after {
+ background: black;
+ box-shadow: $shadow; 
+ content: "";
+ position: absolute;
+ top: 0 - $r;
+ left: 0 - $r;
+ height: $r * 2;
+ width: $r * 2;
+ border-radius: 50%;
+ animation: clockwise #{math.pow(2, 15) * 1ms} infinite linear;
+}
+
+body::before {
+ background: black;
+ box-shadow: $shadow; 
+ content: "";
+ position: absolute;
+ bottom: 0 - $r;
+ right: 0 - $r;
+ height: $r * 18;
+ width: $r * 18;
+ border-radius: 50%;
+ animation: anticlockwise #{math.pow(2, 15) * 1ms} infinite linear;
+}
+
+@keyframes clockwise {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes anticlockwise {
+  to {
+    transform: rotate(0deg);
+  }
+  from {
+    transform: rotate(360deg);
+  }
+}
