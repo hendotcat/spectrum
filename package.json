@@ -2,7 +2,7 @@
   "name": "@henrycatalinismith/spectrum",
   "license": "CC0-1.0",
   "dependencies": {
-    "@hendotcat/zoetrope": "latest"
+    "@henrycatalinismith/zoetrope": "latest"
   },
   "scripts": {
     "build": "zoetrope build spectrum.scss",
